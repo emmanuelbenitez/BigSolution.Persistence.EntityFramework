@@ -1,0 +1,53 @@
+<!-- see https://docs.microsoft.com/en-us/visualstudio/msbuild/customize-your-build?view=vs-2019 -->
+<Project>
+
+  <PropertyGroup>
+    <PreRelease Condition=" '$(PreRelease)' == '' ">false</PreRelease>
+    <DelaySign Condition=" '$(DelaySign)' == '' ">true</DelaySign>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile Condition=" '$(DelaySign)' == 'true' ">..\..\build\bigsolution.public.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile Condition=" '$(DelaySign)' == 'false' And '$(AssemblyOriginatorKeyFile)' == '' ">..\..\build\bigsolution.snk</AssemblyOriginatorKeyFile>
+
+    <Major Condition=" '$(Major)' == '' ">1</Major>
+    <Minor Condition=" '$(Minor)' == '' ">0</Minor>
+    <Patch Condition=" '$(Patch)' == '' ">0</Patch>
+    <Build Condition=" '$(Build)' == '' ">0</Build>
+    <Revision Condition=" '$(Revision)' == '' ">0</Revision>
+    <VersionSuffix Condition="'$(PreRelease)' == 'true'">preview$(Build)</VersionSuffix>
+
+    <!-- https://github.com/dotnet/sdk/issues/2 -->
+    <AssemblyVersion>$(Major).$(Minor).0.0</AssemblyVersion>
+    <Authors>Emmanuel Benitez</Authors>
+    <Company>BigSolution</Company>
+    <Copyright>Copyright © 2019 - $([System.DateTime]::Now.Year) BigSolution. All rights reserved.</Copyright>
+    <FileVersion>$(Major).$(Minor).$(Build).$(Revision)</FileVersion>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageVersion Condition=" '$(VersionSuffix)' == '' ">$(AssemblyVersion)</PackageVersion>
+    <PackageVersion Condition=" '$(VersionSuffix)' != '' ">$(AssemblyVersion)-$(VersionSuffix)</PackageVersion>
+    <Product>BigSolutin Infra ($(Configuration) Build)</Product>
+    <Version>$(Major).$(Minor).$(Build).$(Revision)</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\build\bigsolution.public.snk" Link="BigSolution.snk" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)'=='net471' OR '$(TargetFramework)'=='net472' OR '$(TargetFramework)'=='net48'">
+    <DefineConstants>NETFRAMEWORK</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)'=='netcoreapp3.0' OR '$(TargetFramework)'=='netcoreapp3.1'">
+    <DefineConstants>NETCORE;HAVE_HASHCODE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <DefineConstants>NETSTANDARD;NETSTANDARD2_0</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
+    <DefineConstants>NETSTANDARD;NETSTANDARD2_1;HAVE_HASHCODE</DefineConstants>
+  </PropertyGroup>
+
+</Project>
