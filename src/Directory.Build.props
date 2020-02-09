@@ -9,7 +9,7 @@
     <AssemblyOriginatorKeyFile Condition=" '$(DelaySign)' == 'false' And '$(AssemblyOriginatorKeyFile)' == '' ">..\..\build\bigsolution.snk</AssemblyOriginatorKeyFile>
 
     <Major Condition=" '$(Major)' == '' ">1</Major>
-    <Minor Condition=" '$(Minor)' == '' ">0</Minor>
+    <Minor Condition=" '$(Minor)' == '' ">1</Minor>
     <Patch Condition=" '$(Patch)' == '' ">0</Patch>
     <Build Condition=" '$(Build)' == '' ">0</Build>
     <Revision Condition=" '$(Revision)' == '' ">0</Revision>

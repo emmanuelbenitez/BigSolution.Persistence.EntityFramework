@@ -9,7 +9,7 @@
 
   <PropertyGroup>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/emmanuelbenitez/BigSolution.Mapping</RepositoryUrl>
+    <RepositoryUrl>https://github.com/emmanuelbenitez/BigSolution.Persistence.EntityFramework</RepositoryUrl>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
   </PropertyGroup>
 
@@ -27,12 +27,8 @@
     <PackageTags>utility mapping</PackageTags>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <AssemblyName>BigSolution.Infra.Mapping</AssemblyName>
+    <AssemblyName>BigSolution.Infra.Persistence</AssemblyName>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Include="..\..\.editorconfig" Link=".editorconfig" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="BigSolution.Infra.Domain" Version="1.1.0" />
