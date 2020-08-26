@@ -26,7 +26,9 @@ namespace BigSolution.Infra.Persistence
     {
         protected DbInitializer(TContext context)
         {
-            Requires.NotNull(context, nameof(context));
+            Requires.Argument(context, nameof(context))
+                .IsNotNull()
+                .Check();
 
             _context = context;
         }

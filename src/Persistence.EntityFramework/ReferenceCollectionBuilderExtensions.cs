@@ -32,8 +32,12 @@ namespace BigSolution.Infra.Persistence
             PropertyAccessMode? propertyAccessMode)
             where TEntity : class
         {
-            Requires.NotNull(builder, nameof(builder));
-            Requires.NotNull(propertyExpression, nameof(propertyExpression));
+            Requires.Argument(builder, nameof(builder))
+                .IsNotNull()
+                .Check();
+            Requires.Argument(propertyExpression, nameof(propertyExpression))
+                .IsNotNull()
+                .Check();
 
             builder.Metadata.FindNavigation(propertyExpression.GetPropertyAccess())
                 .SetPropertyAccessMode(propertyAccessMode);

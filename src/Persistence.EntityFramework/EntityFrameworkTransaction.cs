@@ -27,7 +27,9 @@ namespace BigSolution.Infra.Persistence
     {
         public EntityFrameworkTransaction(IDbContextTransaction transaction)
         {
-            Requires.NotNull(transaction, nameof(transaction));
+            Requires.Argument(transaction, nameof(transaction))
+                .IsNotNull()
+                .Check();
 
             _transaction = transaction;
         }

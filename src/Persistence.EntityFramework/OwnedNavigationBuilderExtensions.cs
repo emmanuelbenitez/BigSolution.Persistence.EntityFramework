@@ -29,7 +29,9 @@ namespace BigSolution.Infra.Persistence
             where TRelatedEntity : class
             where TEntity : class
         {
-            Requires.NotNull(builder, nameof(builder));
+            Requires.Argument(builder, nameof(builder))
+                .IsNotNull()
+                .Check();
 
             configureAction?.Invoke(builder);
 

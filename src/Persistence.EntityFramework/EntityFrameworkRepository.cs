@@ -28,7 +28,9 @@ namespace BigSolution.Infra.Persistence
     {
         protected EntityFrameworkRepository(TDbContext dbContext)
         {
-            Requires.NotNull(dbContext, nameof(dbContext));
+            Requires.Argument(dbContext, nameof(dbContext))
+                .IsNotNull()
+                .Check();
 
             _dbContext = dbContext;
         }
@@ -37,14 +39,18 @@ namespace BigSolution.Infra.Persistence
 
         public void Add(TAggregate entity)
         {
-            Requires.NotNull(entity, nameof(entity));
+            Requires.Argument(entity, nameof(entity))
+                .IsNotNull()
+                .Check();
 
             _dbContext.Add(entity);
         }
 
         public void Delete(TAggregate entity)
         {
-            Requires.NotNull(entity, nameof(entity));
+            Requires.Argument(entity, nameof(entity))
+                .IsNotNull()
+                .Check();
 
             _dbContext.Remove(entity);
         }
@@ -53,7 +59,9 @@ namespace BigSolution.Infra.Persistence
 
         public void Update(TAggregate entity)
         {
-            Requires.NotNull(entity, nameof(entity));
+            Requires.Argument(entity, nameof(entity))
+                .IsNotNull()
+                .Check();
 
             _dbContext.Update(entity);
         }

@@ -29,7 +29,9 @@ namespace BigSolution.Infra.Persistence
     {
         protected EntityFrameworkUnitOfWork(TDbContext dbContext)
         {
-            Requires.NotNull(dbContext, nameof(dbContext));
+            Requires.Argument(dbContext, nameof(dbContext))
+                .IsNotNull()
+                .Check();
 
             _dbContext = dbContext;
         }
