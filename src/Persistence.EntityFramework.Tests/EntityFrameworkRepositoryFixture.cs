@@ -1,4 +1,22 @@
-﻿using System;
+﻿#region Copyright & License
+
+// Copyright © 2020 - 2020 Emmanuel Benitez
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+// http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+#endregion
+
+using System;
 using System.Diagnostics.CodeAnalysis;
 using BigSolution.Infra.Domain;
 using FluentAssertions;
@@ -33,16 +51,16 @@ namespace BigSolution.Infra.Persistence
         [SuppressMessage("ReSharper", "ObjectCreationAsStatement")]
         public void CreateFailed()
         {
-            Action action = () => new FakeRepository(null);
-            action.Should().ThrowExactly<ArgumentNullException>().Where(exception => exception.ParamName == "dbContext");
+            Action act = () => new FakeRepository(null);
+            act.Should().ThrowExactly<ArgumentNullException>().Where(exception => exception.ParamName == "dbContext");
         }
 
         [Fact]
         [SuppressMessage("ReSharper", "ObjectCreationAsStatement")]
         public void CreateSucceeds()
         {
-            Action action = () => new FakeRepository(new Mock<DbContext>().Object);
-            action.Should().NotThrow();
+            Action act = () => new FakeRepository(new Mock<DbContext>().Object);
+            act.Should().NotThrow();
         }
 
         [Fact]
@@ -65,6 +83,17 @@ namespace BigSolution.Infra.Persistence
         }
 
         [Fact]
+        public void GetEntitiesSucceeds()
+        {
+            var mockedContext = new Mock<DbContext>();
+            mockedContext.Setup(context => context.Set<FakeEntity>())
+                .Returns(new Mock<DbSet<FakeEntity>>().Object);
+            var repository = new FakeRepository(mockedContext.Object);
+            repository.Entities.Should().NotBeNull();
+            mockedContext.Verify(context => context.Set<FakeEntity>(), Times.Once);
+        }
+
+        [Fact]
         public void UpdateFailed()
         {
             var mockedContext = new Mock<DbContext>();
@@ -81,17 +110,6 @@ namespace BigSolution.Infra.Persistence
             var entity = new FakeEntity();
             repository.Update(entity);
             mockedContext.Verify(context => context.Update(It.IsIn(entity)), Times.Once);
-        }
-
-        [Fact]
-        public void GetEntitiesSucceeds()
-        {
-            var mockedContext = new Mock<DbContext>();
-            mockedContext.Setup(context => context.Set<FakeEntity>())
-                .Returns(new Mock<DbSet<FakeEntity>>().Object);
-            var repository = new FakeRepository(mockedContext.Object);
-            repository.Entities.Should().NotBeNull();
-            mockedContext.Verify(context => context.Set<FakeEntity>(), Times.Once);
         }
 
         [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
