@@ -1,6 +1,6 @@
 ﻿#region Copyright & License
 
-// Copyright © 2020 - 2020 Emmanuel Benitez
+// Copyright © 2020 - 2021 Emmanuel Benitez
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,11 +16,12 @@
 
 #endregion
 
-using BigSolution.Infra.Domain;
+using System.Diagnostics.CodeAnalysis;
+using BigSolution.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace BigSolution.Infra.Persistence
+namespace BigSolution.Persistence
 {
     public abstract class DerivedEntityTypeConfiguration<TEntity, TId, TBaseType> : IEntityTypeConfiguration<TEntity>
         where TEntity : Entity<TId>, TBaseType
@@ -36,6 +37,7 @@ namespace BigSolution.Infra.Persistence
 
         #endregion
 
-        protected abstract void ConfigureInternal(EntityTypeBuilder<TEntity> builder);
+        [SuppressMessage("ReSharper", "UnusedParameter.Global")]
+        protected abstract void ConfigureInternal([JetBrains.Annotations.NotNull] EntityTypeBuilder<TEntity> builder);
     }
 }

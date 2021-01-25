@@ -1,6 +1,6 @@
 ﻿#region Copyright & License
 
-// Copyright © 2020 - 2020 Emmanuel Benitez
+// Copyright © 2020 - 2021 Emmanuel Benitez
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,15 +16,16 @@
 
 #endregion
 
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 
-namespace BigSolution.Infra.Persistence
+namespace BigSolution.Persistence
 {
     public abstract class DbInitializer<TContext> : IDbInitializer
         where TContext : DbContext
     {
-        protected DbInitializer(TContext context)
+        protected DbInitializer([NotNull] TContext context)
         {
             Requires.Argument(context, nameof(context))
                 .IsNotNull()
@@ -45,7 +46,9 @@ namespace BigSolution.Infra.Persistence
 
         #endregion
 
-        protected virtual void SeedData(TContext context) { }
+        [SuppressMessage("ReSharper", "VirtualMemberNeverOverridden.Global")]
+        [SuppressMessage("ReSharper", "UnusedParameter.Global")]
+        protected virtual void SeedData([JetBrains.Annotations.NotNull] TContext context) { }
 
         private readonly TContext _context;
     }

@@ -1,6 +1,6 @@
 ﻿#region Copyright & License
 
-// Copyright © 2020 - 2020 Emmanuel Benitez
+// Copyright © 2020 - 2021 Emmanuel Benitez
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,15 +19,16 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using BigSolution.Infra.Domain;
+using BigSolution.Domain;
+using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 
-namespace BigSolution.Infra.Persistence
+namespace BigSolution.Persistence
 {
     public abstract class EntityFrameworkUnitOfWork<TDbContext> : IUnitOfWork, IDisposable
         where TDbContext : DbContext
     {
-        protected EntityFrameworkUnitOfWork(TDbContext dbContext)
+        protected EntityFrameworkUnitOfWork([NotNull] TDbContext dbContext)
         {
             Requires.Argument(dbContext, nameof(dbContext))
                 .IsNotNull()

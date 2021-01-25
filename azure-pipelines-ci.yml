@@ -15,6 +15,3 @@ extends:
   template: Pipelines/dotnet-nuget/continuous-integration.yml@pipelineTemplateRepository
   parameters:
     ProjectOrSolutionPath: "$(Build.SourcesDirectory)/BigSolution.Persistence.EntityFramework.sln"
-    Major: ${{ variables.versionMajor }}
-    Minor: ${{ variables.versionMinor }}
-    Patch: ${{ variables.versionPatch }}

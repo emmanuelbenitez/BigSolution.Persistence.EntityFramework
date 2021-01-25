@@ -19,9 +19,10 @@
 <Project>
   <PropertyGroup>
     <Major Condition=" '$(Major)' == '' ">1</Major>
-    <Minor Condition=" '$(Minor)' == '' ">0</Minor>
+    <Minor Condition=" '$(Minor)' == '' ">1</Minor>
     <Patch Condition=" '$(Patch)' == '' ">1</Patch>
   </PropertyGroup>
 
   <Import Project="$(MSBuildThisFileDirectory)../.resources/Directory.Build.props" />
+  <Import Project="$(MSBuildThisFileDirectory)../.settings/Directory.Build.props" />
 </Project>
