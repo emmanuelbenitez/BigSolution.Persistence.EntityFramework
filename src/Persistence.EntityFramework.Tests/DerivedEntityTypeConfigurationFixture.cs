@@ -1,6 +1,6 @@
 ﻿#region Copyright & License
 
-// Copyright © 2020 - 2020 Emmanuel Benitez
+// Copyright © 2020 - 2021 Emmanuel Benitez
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,13 +16,13 @@
 
 #endregion
 
-using BigSolution.Infra.Domain;
+using BigSolution.Domain;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Xunit;
 
-namespace BigSolution.Infra.Persistence
+namespace BigSolution.Persistence
 {
     public class DerivedEntityTypeConfigurationFixture
     {

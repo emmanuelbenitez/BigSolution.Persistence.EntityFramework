@@ -1,6 +1,6 @@
 ﻿#region Copyright & License
 
-// Copyright © 2020 - 2020 Emmanuel Benitez
+// Copyright © 2020 - 2021 Emmanuel Benitez
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,15 +17,19 @@
 #endregion
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
+using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace BigSolution.Infra.Persistence
+namespace BigSolution.Persistence
 {
+    [UsedImplicitly]
     public static class ReferenceCollectionBuilderExtensions
     {
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public static void SetNavigationPropertyAccessMode<TEntity, TProperty>(
             this EntityTypeBuilder<TEntity> builder,
             Expression<Func<TEntity, TProperty>> propertyExpression,

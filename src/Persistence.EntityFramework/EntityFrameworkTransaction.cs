@@ -1,6 +1,6 @@
 ﻿#region Copyright & License
 
-// Copyright © 2020 - 2020 Emmanuel Benitez
+// Copyright © 2020 - 2021 Emmanuel Benitez
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,10 +18,10 @@
 
 using System.Threading;
 using System.Threading.Tasks;
-using BigSolution.Infra.Domain;
+using BigSolution.Domain;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace BigSolution.Infra.Persistence
+namespace BigSolution.Persistence
 {
     public sealed class EntityFrameworkTransaction : ITransaction
     {
