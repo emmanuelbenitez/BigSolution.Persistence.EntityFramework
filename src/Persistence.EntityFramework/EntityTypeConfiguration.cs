@@ -31,7 +31,7 @@ namespace BigSolution.Persistence
 
         public void Configure([NotNull] EntityTypeBuilder<TEntity> builder)
         {
-            builder.ToTable(null, SchemaName);
+            builder.ToTable(typeof(TEntity).Name, SchemaName);
 
             var idProperty = builder.Property(x => x.Id)
                 .IsRequired()
