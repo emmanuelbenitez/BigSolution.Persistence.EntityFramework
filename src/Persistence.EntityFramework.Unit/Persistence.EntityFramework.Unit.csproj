@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <AssemblyTitle>BigSolution.Infra.Persistence.EntityFramework</AssemblyTitle>
-    <RootNamespace>BigSolution.Persistence</RootNamespace>
-    <Description>Implements repository pattern with EF</Description>
+    <AssemblyTitle>BigSolution.Infra.Persistence.EntityFramework.Unit</AssemblyTitle>
+    <RootNamespace>BigSolution.Persistence.Unit</RootNamespace>
+    <Description>Provide fixture for testing Persistence.EntityFramework assembly</Description>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -24,20 +24,19 @@
     <!--<PackageIconUrl>icon url prop</PackageIconUrl>-->
     <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
     <!--<PackageReleaseNotes>release notes prop</PackageReleaseNotes>-->
-    <PackageTags>ef repository</PackageTags>
+    <PackageTags>ef unit repository</PackageTags>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <AssemblyName>BigSolution.Infra.Persistence</AssemblyName>
+    <AssemblyName>BigSolution.Infra.Persistence.Unit</AssemblyName>
   </PropertyGroup>
 
+
   <ItemGroup>
-    <PackageReference Include="BigSolution.Infra.Domain" Version="1.2.1-preview.210204.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="5.0.3">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.7" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="5.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Persistence.EntityFramework\Persistence.EntityFramework.csproj" />
   </ItemGroup>
 
 </Project>

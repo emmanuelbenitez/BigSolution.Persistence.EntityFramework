@@ -18,28 +18,23 @@
 
 using System;
 using BigSolution.Domain;
-using BigSolution.Persistence.Unit;
+using BigSolution.Persistence.Unit.Conventions;
 using FluentAssertions;
+using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Xunit;
 
-namespace BigSolution.Persistence
+namespace BigSolution.Persistence.Conventions
 {
-    public class EntityTypeConfigurationFixture : DbContextFixture
+    public class AuditShadowPropertiesConvention : EntityTypeBuilderConventionFixture<AuditShadowPropertiesConvention<AuditShadowPropertiesConvention.FakeEntity>,
+        AuditShadowPropertiesConvention.FakeEntity>
     {
         [Fact]
-        public void ConfigurationSucceeds()
+        public void ConventionApplied()
         {
-            _context.ModelCreator = builder => builder.ApplyConfiguration(new FakeEntityConfiguration());
-            var entityType = _context.Model.FindEntityType(typeof(FakeEntity));
-            entityType.GetSchema().Should().BeNullOrEmpty();
+            var entityType = Apply(new AuditShadowPropertiesConvention<FakeEntity>(), true);
 
-            var idProperty = entityType.FindProperty("Id");
-            idProperty.IsNullable.Should().BeFalse();
-            idProperty.IsPrimaryKey().Should().BeTrue();
-            idProperty.ValueGenerated.Should().Be(ValueGenerated.OnAdd);
             var creationDateProperty = entityType.FindProperty("CreationDate");
             creationDateProperty.IsNullable.Should().BeFalse();
             creationDateProperty.IsShadowProperty().Should().BeTrue();
@@ -57,15 +52,11 @@ namespace BigSolution.Persistence
             rowVersionProperty.IsConcurrencyToken.Should().BeTrue();
         }
 
-        private sealed class FakeEntity : Entity<int> { }
+        #region Nested Type: FakeEntity
 
-        private sealed class FakeEntityConfiguration : EntityTypeConfiguration<FakeEntity, int>
-        {
-            #region Base Class Member Overrides
+        [UsedImplicitly]
+        public sealed class FakeEntity : IEntity { }
 
-            protected override void ConfigureInternal(EntityTypeBuilder<FakeEntity> builder) { }
-
-            #endregion
-        }
+        #endregion
     }
 }

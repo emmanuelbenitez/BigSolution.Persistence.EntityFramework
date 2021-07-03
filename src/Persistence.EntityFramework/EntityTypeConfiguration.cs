@@ -16,7 +16,11 @@
 
 #endregion
 
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using BigSolution.Domain;
+using BigSolution.Persistence.Conventions;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -29,28 +33,27 @@ namespace BigSolution.Persistence
     {
         #region IEntityTypeConfiguration<TEntity> Members
 
-        public void Configure([NotNull] EntityTypeBuilder<TEntity> builder)
+        public void Configure([JetBrains.Annotations.NotNull] EntityTypeBuilder<TEntity> builder)
         {
-            builder.ToTable(typeof(TEntity).Name, SchemaName);
-
-            var idProperty = builder.Property(x => x.Id)
-                .IsRequired()
-                .UsePropertyAccessMode(PropertyAccessMode.FieldDuringConstruction);
-
-            if (IsIdAutomaticallyGenerated) idProperty.ValueGeneratedOnAdd();
-            else idProperty.ValueGeneratedNever();
-
-            builder.HasKey(x => x.Id);
+            foreach (var convention in Conventions ?? Enumerable.Empty<IEntityTypeBuilderConvention<TEntity>>())
+            {
+                convention.Apply(builder);
+            }
 
             ConfigureInternal(builder);
         }
 
         #endregion
 
-        protected virtual bool IsIdAutomaticallyGenerated => true;
+        [SuppressMessage("ReSharper", "VirtualMemberNeverOverridden.Global", Justification = "Public API")]
 
-        protected virtual string SchemaName => null;
+        protected virtual IEnumerable<IEntityTypeBuilderConvention<TEntity>> Conventions => _defaultConventions;
 
-        protected abstract void ConfigureInternal([NotNull] EntityTypeBuilder<TEntity> builder);
+        protected abstract void ConfigureInternal([JetBrains.Annotations.NotNull] EntityTypeBuilder<TEntity> builder);
+
+        private static readonly IEntityTypeBuilderConvention<TEntity>[] _defaultConventions = {
+            new IdEntityTypeConvention<TEntity, TId>(true),
+            new AuditShadowPropertiesConvention<TEntity>()
+        };
     }
 }

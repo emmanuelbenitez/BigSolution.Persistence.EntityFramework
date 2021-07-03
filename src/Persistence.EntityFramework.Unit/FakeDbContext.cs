@@ -16,29 +16,31 @@
 
 #endregion
 
-using System.Diagnostics.CodeAnalysis;
+using System;
 using Microsoft.EntityFrameworkCore;
 
-namespace BigSolution.Persistence
+namespace BigSolution.Persistence.Unit
 {
-    public abstract class DbContextBase<TDbContext> : DbContext
-        where TDbContext : DbContextBase<TDbContext>
+    public class FakeDbContext : DbContext
     {
-        [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
-        protected DbContextBase(DbContextOptions<TDbContext> options)
-            : base(options) { }
+        public FakeDbContext()
+            : this(
+                new DbContextOptionsBuilder<FakeDbContext>()
+                    .UseInMemoryDatabase("WithSchema")
+                    .EnableServiceProviderCaching(false)
+                    .Options) { }
+
+        public FakeDbContext(DbContextOptions<FakeDbContext> options) : base(options) { }
 
         #region Base Class Member Overrides
 
-        protected sealed override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
-            if (!string.IsNullOrWhiteSpace(SchemaName)) modelBuilder.HasDefaultSchema(SchemaName);
-            base.OnModelCreating(modelBuilder);
+            ModelCreator?.Invoke(modelBuilder);
         }
 
         #endregion
 
-        protected virtual string SchemaName { get; } = null;
+        public Action<ModelBuilder> ModelCreator { get; set; }
     }
 }

@@ -17,7 +17,9 @@
 #endregion
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using BigSolution.Domain;
+using BigSolution.Persistence.Unit;
 using FluentAssertions;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
@@ -27,8 +29,9 @@ using Xunit;
 
 namespace BigSolution.Persistence
 {
-    public class OwnedNavigationBuilderExtensionsFixture
+    public class OwnedNavigationBuilderExtensionsFixture : DbContextFixture
     {
+        [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute", Justification = "Testing purpose")]
         [Fact]
         public void ConfigureFailed()
         {
@@ -40,46 +43,16 @@ namespace BigSolution.Persistence
         public void ConfigureSucceedsWithAction()
         {
             var mockedAction = new Mock<Action<OwnedNavigationBuilder<FakeEntity, OwnedProperty>>>();
-            var options = new DbContextOptionsBuilder<FakeDbContext>()
-                .UseInMemoryDatabase("WithSchema")
-                .EnableServiceProviderCaching(false)
-                .Options;
-            using var dbContext = new FakeDbContext(options);
-            dbContext.ModelCreating += (sender, builder) => builder.ApplyConfiguration(new FakeEntityConfiguration(mockedAction.Object));
-            dbContext.Model.FindEntityType(typeof(FakeEntity));
+            _context.ModelCreator = builder => builder.ApplyConfiguration(new FakeEntityConfiguration(mockedAction.Object));
+            _context.Model.FindEntityType(typeof(FakeEntity));
             mockedAction.Verify(action => action.Invoke(It.IsAny<OwnedNavigationBuilder<FakeEntity, OwnedProperty>>()), Times.Once);
         }
 
         [Fact]
         public void ConfigureSucceedsWithoutAction()
         {
-            var options = new DbContextOptionsBuilder<FakeDbContext>()
-                .UseInMemoryDatabase("WithSchema")
-                .EnableServiceProviderCaching(false)
-                .Options;
-            using var dbContext = new FakeDbContext(options);
-            dbContext.ModelCreating += (sender, builder) => builder.ApplyConfiguration(new FakeEntityConfiguration(null));
-            dbContext.Model.FindEntityType(typeof(FakeEntity));
-        }
-
-        private class FakeDbContext : DbContext
-        {
-            public FakeDbContext(DbContextOptions<FakeDbContext> options) : base(options) { }
-
-            #region Base Class Member Overrides
-
-            protected override void OnModelCreating(ModelBuilder modelBuilder)
-            {
-                ModelCreating?.Invoke(this, modelBuilder);
-            }
-
-            #endregion
-
-            #region Events
-
-            public event EventHandler<ModelBuilder> ModelCreating;
-
-            #endregion
+            _context.ModelCreator = builder => builder.ApplyConfiguration(new FakeEntityConfiguration(null));
+            _context.Model.FindEntityType(typeof(FakeEntity));
         }
 
         private class FakeEntityConfiguration : EntityTypeConfiguration<FakeEntity, int>

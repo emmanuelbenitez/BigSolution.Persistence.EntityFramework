@@ -52,7 +52,7 @@ namespace BigSolution.Persistence
         [SuppressMessage("ReSharper", "ObjectCreationAsStatement")]
         public void CreateFailed()
         {
-            Action action = () => new EntityFrameworkTransaction(null);
+            Action action = () => new EntityFrameworkTransaction(null!);
             action.Should().ThrowExactly<ArgumentNullException>().Where(exception => exception.ParamName == "transaction");
         }
 
