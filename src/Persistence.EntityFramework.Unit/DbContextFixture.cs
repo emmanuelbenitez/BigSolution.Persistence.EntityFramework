@@ -19,34 +19,33 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace BigSolution.Persistence.Unit
+namespace BigSolution.Persistence.Unit;
+
+public abstract class DbContextFixture : IDisposable
 {
-    public abstract class DbContextFixture : IDisposable
+    protected DbContextFixture()
     {
-        protected DbContextFixture()
-        {
-            _context = new FakeDbContext();
-        }
-
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        #endregion
-
-        [SuppressMessage("ReSharper", "VirtualMemberNeverOverridden.Global", Justification = "Public API")]
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _context?.Dispose();
-            }
-        }
-
-        protected readonly FakeDbContext _context;
+        _context = new FakeDbContext();
     }
+
+    #region IDisposable Members
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    #endregion
+
+    [SuppressMessage("ReSharper", "VirtualMemberNeverOverridden.Global", Justification = "Public API")]
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            _context?.Dispose();
+        }
+    }
+
+    protected readonly FakeDbContext _context;
 }

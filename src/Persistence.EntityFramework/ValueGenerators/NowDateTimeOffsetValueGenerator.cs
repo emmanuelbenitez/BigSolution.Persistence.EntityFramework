@@ -16,13 +16,25 @@
 
 #endregion
 
-using BigSolution.Domain;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.ValueGeneration;
 
-namespace BigSolution.Persistence.Conventions;
+namespace BigSolution.Persistence.ValueGenerators;
 
-public class IdEntityTypeConvention<TEntity, TId> : KeyEntityTypeConvention<TEntity, TId>
-    where TEntity : Entity<TId>
+public class NowDateTimeOffsetValueGenerator : ValueGenerator<DateTimeOffset>
 {
-    public IdEntityTypeConvention(bool isAutomaticallyGenerated)
-        : base(entity => entity.Id, isAutomaticallyGenerated) { }
+    #region Base Class Member Overrides
+
+    public override DateTimeOffset Next(EntityEntry entry)
+    {
+        return DateTimeOffset.UtcNow;
+    }
+
+    #endregion
+
+    #region Base Class Member Overrides
+
+    public override bool GeneratesTemporaryValues => false;
+
+    #endregion
 }

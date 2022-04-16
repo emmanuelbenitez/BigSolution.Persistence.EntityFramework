@@ -1,6 +1,6 @@
 ﻿#region Copyright & License
 
-// Copyright © 2020 - 2021 Emmanuel Benitez
+// Copyright © 2020 - 2022 Emmanuel Benitez
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,11 +19,10 @@
 using BigSolution.Domain;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace BigSolution.Persistence.Conventions
+namespace BigSolution.Persistence.Conventions;
+
+public interface IEntityTypeBuilderConvention<TEntity>
+    where TEntity : class, IEntity
 {
-    public interface IEntityTypeBuilderConvention<TEntity>
-        where TEntity : class, IEntity
-    {
-        void Apply(EntityTypeBuilder<TEntity> builder);
-    }
+    void Apply(EntityTypeBuilder<TEntity> builder);
 }

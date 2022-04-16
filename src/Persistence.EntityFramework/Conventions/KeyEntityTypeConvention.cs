@@ -1,6 +1,6 @@
 ﻿#region Copyright & License
 
-// Copyright © 2020 - 2021 Emmanuel Benitez
+// Copyright © 2020 - 2022 Emmanuel Benitez
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,40 +16,38 @@
 
 #endregion
 
-using System;
 using System.Linq.Expressions;
 using BigSolution.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace BigSolution.Persistence.Conventions
+namespace BigSolution.Persistence.Conventions;
+
+public class KeyEntityTypeConvention<TEntity, TKey> : IEntityTypeBuilderConvention<TEntity> where TEntity : class, IEntity
 {
-    public class KeyEntityTypeConvention<TEntity, TKey> : IEntityTypeBuilderConvention<TEntity> where TEntity : class, IEntity
+    protected KeyEntityTypeConvention(Expression<Func<TEntity, TKey>> keyPropertyExpression, bool isAutomaticallyGenerated)
     {
-        protected KeyEntityTypeConvention(Expression<Func<TEntity, TKey>> keyPropertyExpression, bool isAutomaticallyGenerated)
-        {
-            _keyPropertyExpression = keyPropertyExpression;
-            IsAutomaticallyGenerated = isAutomaticallyGenerated;
-        }
-
-        #region IEntityTypeBuilderConvention<TEntity> Members
-
-        public void Apply(EntityTypeBuilder<TEntity> builder)
-        {
-            var idProperty = builder.Property(_keyPropertyExpression)
-                .IsRequired()
-                .UsePropertyAccessMode(PropertyAccessMode.FieldDuringConstruction);
-
-            if (IsAutomaticallyGenerated) idProperty.ValueGeneratedOnAdd();
-            else idProperty.ValueGeneratedNever();
-
-            builder.HasKey(_keyPropertyExpression.ToObjectExpression());
-        }
-
-        #endregion
-
-        private bool IsAutomaticallyGenerated { get; }
-
-        private readonly Expression<Func<TEntity, TKey>> _keyPropertyExpression;
+        _keyPropertyExpression = keyPropertyExpression;
+        IsAutomaticallyGenerated = isAutomaticallyGenerated;
     }
+
+    #region IEntityTypeBuilderConvention<TEntity> Members
+
+    public void Apply(EntityTypeBuilder<TEntity> builder)
+    {
+        var idProperty = builder.Property(_keyPropertyExpression)
+            .IsRequired()
+            .UsePropertyAccessMode(PropertyAccessMode.FieldDuringConstruction);
+
+        if (IsAutomaticallyGenerated) idProperty.ValueGeneratedOnAdd();
+        else idProperty.ValueGeneratedNever();
+
+        builder.HasKey(_keyPropertyExpression.ToObjectExpression());
+    }
+
+    #endregion
+
+    private bool IsAutomaticallyGenerated { get; }
+
+    private readonly Expression<Func<TEntity, TKey>> _keyPropertyExpression;
 }

@@ -1,6 +1,6 @@
 ﻿#region Copyright & License
 
-// Copyright © 2020 - 2021 Emmanuel Benitez
+// Copyright © 2020 - 2022 Emmanuel Benitez
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,28 +16,26 @@
 
 #endregion
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace BigSolution.Persistence
+namespace BigSolution.Persistence;
+
+public static class OwnedNavigationBuilderExtensions
 {
-    public static class OwnedNavigationBuilderExtensions
+    [SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
+    public static OwnedNavigationBuilder<TEntity, TRelatedEntity> Configure<TEntity, TRelatedEntity>(
+        [JetBrains.Annotations.NotNull] this OwnedNavigationBuilder<TEntity, TRelatedEntity> builder,
+        Action<OwnedNavigationBuilder<TEntity, TRelatedEntity>> configureAction)
+        where TRelatedEntity : class
+        where TEntity : class
     {
-        [SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
-        public static OwnedNavigationBuilder<TEntity, TRelatedEntity> Configure<TEntity, TRelatedEntity>(
-            [JetBrains.Annotations.NotNull] this OwnedNavigationBuilder<TEntity, TRelatedEntity> builder,
-            Action<OwnedNavigationBuilder<TEntity, TRelatedEntity>> configureAction)
-            where TRelatedEntity : class
-            where TEntity : class
-        {
-            Requires.Argument(builder, nameof(builder))
-                .IsNotNull()
-                .Check();
+        Requires.Argument(builder, nameof(builder))
+            .IsNotNull()
+            .Check();
 
-            configureAction?.Invoke(builder);
+        configureAction?.Invoke(builder);
 
-            return builder;
-        }
+        return builder;
     }
 }

@@ -1,6 +1,6 @@
 ﻿#region Copyright & License
 
-// Copyright © 2020 - 2021 Emmanuel Benitez
+// Copyright © 2020 - 2022 Emmanuel Benitez
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,28 +16,29 @@
 
 #endregion
 
-using System;
 using BigSolution.Domain;
+using BigSolution.Persistence.ValueGenerators;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace BigSolution.Persistence.Conventions
+namespace BigSolution.Persistence.Conventions;
+
+public class AuditShadowPropertiesConvention<TEntity> : IEntityTypeBuilderConvention<TEntity>
+    where TEntity : class, IEntity
 {
-    public class AuditShadowPropertiesConvention<TEntity> : IEntityTypeBuilderConvention<TEntity>
-        where TEntity : class, IEntity
+    #region IEntityTypeBuilderConvention<TEntity> Members
+
+    public void Apply(EntityTypeBuilder<TEntity> builder)
     {
-        #region IEntityTypeBuilderConvention<TEntity> Members
-
-        public void Apply(EntityTypeBuilder<TEntity> builder)
-        {
-            builder.Property<DateTime>("CreationDate")
-                .IsRequired()
-                .ValueGeneratedOnAdd();
-            builder.Property<DateTime?>("LastUpdateDate")
-                .ValueGeneratedOnUpdate();
-            builder.Property<byte[]>("RowVersion")
-                .IsRowVersion();
-        }
-
-        #endregion
+        builder.Property<DateTimeOffset>("CreationDate")
+            .IsRequired()
+            .ValueGeneratedOnAdd()
+            .HasValueGenerator<NowDateTimeOffsetValueGenerator>();
+        builder.Property<DateTimeOffset?>("LastUpdateDate")
+            .ValueGeneratedOnUpdate()
+            .HasValueGenerator<NowDateTimeOffsetValueGenerator>();
+        builder.Property<byte[]>("RowVersion")
+            .IsRowVersion();
     }
+
+    #endregion
 }

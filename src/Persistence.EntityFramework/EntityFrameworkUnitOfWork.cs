@@ -1,6 +1,6 @@
 ﻿#region Copyright & License
 
-// Copyright © 2020 - 2021 Emmanuel Benitez
+// Copyright © 2020 - 2022 Emmanuel Benitez
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,55 +16,51 @@
 
 #endregion
 
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using BigSolution.Domain;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 
-namespace BigSolution.Persistence
+namespace BigSolution.Persistence;
+
+public abstract class EntityFrameworkUnitOfWork<TDbContext> : IUnitOfWork, IDisposable
+    where TDbContext : DbContext
 {
-    public abstract class EntityFrameworkUnitOfWork<TDbContext> : IUnitOfWork, IDisposable
-        where TDbContext : DbContext
+    protected EntityFrameworkUnitOfWork([NotNull] TDbContext dbContext)
     {
-        protected EntityFrameworkUnitOfWork([NotNull] TDbContext dbContext)
-        {
-            Requires.Argument(dbContext, nameof(dbContext))
-                .IsNotNull()
-                .Check();
+        Requires.Argument(dbContext, nameof(dbContext))
+            .IsNotNull()
+            .Check();
 
-            _dbContext = dbContext;
-        }
-
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            _dbContext.Dispose();
-        }
-
-        #endregion
-
-        #region IUnitOfWork Members
-
-        public ITransaction BeginTransaction()
-        {
-            return new EntityFrameworkTransaction(_dbContext.Database.BeginTransaction());
-        }
-
-        public void Save()
-        {
-            _dbContext.SaveChanges();
-        }
-
-        public async Task SaveAsync(CancellationToken cancellationToken = default)
-        {
-            await _dbContext.SaveChangesAsync(cancellationToken);
-        }
-
-        #endregion
-
-        private readonly DbContext _dbContext;
+        _dbContext = dbContext;
     }
+
+    #region IDisposable Members
+
+    public void Dispose()
+    {
+        _dbContext.Dispose();
+    }
+
+    #endregion
+
+    #region IUnitOfWork Members
+
+    public ITransaction BeginTransaction()
+    {
+        return new EntityFrameworkTransaction(_dbContext.Database.BeginTransaction());
+    }
+
+    public void Save()
+    {
+        _dbContext.SaveChanges();
+    }
+
+    public async Task SaveAsync(CancellationToken cancellationToken = default)
+    {
+        await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    #endregion
+
+    private readonly DbContext _dbContext;
 }

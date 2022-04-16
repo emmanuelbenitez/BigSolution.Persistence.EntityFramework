@@ -19,28 +19,27 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 
-namespace BigSolution.Persistence.Unit
+namespace BigSolution.Persistence.Unit;
+
+public class FakeDbContext : DbContext
 {
-    public class FakeDbContext : DbContext
+    public FakeDbContext()
+        : this(
+            new DbContextOptionsBuilder<FakeDbContext>()
+                .UseInMemoryDatabase("WithSchema")
+                .EnableServiceProviderCaching(false)
+                .Options) { }
+
+    public FakeDbContext(DbContextOptions<FakeDbContext> options) : base(options) { }
+
+    #region Base Class Member Overrides
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        public FakeDbContext()
-            : this(
-                new DbContextOptionsBuilder<FakeDbContext>()
-                    .UseInMemoryDatabase("WithSchema")
-                    .EnableServiceProviderCaching(false)
-                    .Options) { }
-
-        public FakeDbContext(DbContextOptions<FakeDbContext> options) : base(options) { }
-
-        #region Base Class Member Overrides
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            ModelCreator?.Invoke(modelBuilder);
-        }
-
-        #endregion
-
-        public Action<ModelBuilder> ModelCreator { get; set; }
+        ModelCreator?.Invoke(modelBuilder);
     }
+
+    #endregion
+
+    public Action<ModelBuilder> ModelCreator { get; set; }
 }

@@ -24,26 +24,25 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Xunit;
 
-namespace BigSolution.Persistence.Conventions
+namespace BigSolution.Persistence.Conventions;
+
+public class IdEntityTypeConventionFixture :
+    EntityTypeBuilderConventionFixture<IdEntityTypeConvention<IdEntityTypeConventionFixture.FakeEntity, int>, IdEntityTypeConventionFixture.FakeEntity>
 {
-    public class IdEntityTypeConventionFixture :
-        EntityTypeBuilderConventionFixture<IdEntityTypeConvention<IdEntityTypeConventionFixture.FakeEntity, int>, IdEntityTypeConventionFixture.FakeEntity>
+    [Theory]
+    [InlineData(true, ValueGenerated.OnAdd)]
+    [InlineData(false, ValueGenerated.Never)]
+    public void ConventionApplied(bool isAutomaticallyGenerated, ValueGenerated expectedValueGenerated)
     {
-        [Theory]
-        [InlineData(true, ValueGenerated.OnAdd)]
-        [InlineData(false, ValueGenerated.Never)]
-        public void ConventionApplied(bool isAutomaticallyGenerated, ValueGenerated expectedValueGenerated)
-        {
-            var entityType = Apply(new IdEntityTypeConvention<FakeEntity, int>(isAutomaticallyGenerated));
+        var entityType = Apply(new IdEntityTypeConvention<FakeEntity, int>(isAutomaticallyGenerated));
 
-            entityType.Should().NotBeNull();
-            var idProperty = entityType.FindProperty("Id");
-            idProperty.IsNullable.Should().BeFalse();
-            idProperty.IsPrimaryKey().Should().BeTrue();
-            idProperty.ValueGenerated.Should().Be(expectedValueGenerated);
-        }
-
-        [UsedImplicitly]
-        public sealed class FakeEntity : Entity<int> { }
+        entityType.Should().NotBeNull();
+        var idProperty = entityType.FindProperty("Id");
+        idProperty.IsNullable.Should().BeFalse();
+        idProperty.IsPrimaryKey().Should().BeTrue();
+        idProperty.ValueGenerated.Should().Be(expectedValueGenerated);
     }
+
+    [UsedImplicitly]
+    public sealed class FakeEntity : Entity<int> { }
 }

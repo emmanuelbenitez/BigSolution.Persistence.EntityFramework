@@ -25,38 +25,40 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Xunit;
 
-namespace BigSolution.Persistence.Conventions
+namespace BigSolution.Persistence.Conventions;
+
+public class AuditShadowPropertiesConvention : EntityTypeBuilderConventionFixture<AuditShadowPropertiesConvention<AuditShadowPropertiesConvention.FakeEntity>,
+    AuditShadowPropertiesConvention.FakeEntity>
 {
-    public class AuditShadowPropertiesConvention : EntityTypeBuilderConventionFixture<AuditShadowPropertiesConvention<AuditShadowPropertiesConvention.FakeEntity>,
-        AuditShadowPropertiesConvention.FakeEntity>
+    [Fact]
+    public void ConventionApplied()
     {
-        [Fact]
-        public void ConventionApplied()
-        {
-            var entityType = Apply(new AuditShadowPropertiesConvention<FakeEntity>(), true);
+        var entityType = Apply(new AuditShadowPropertiesConvention<FakeEntity>(), true);
 
-            var creationDateProperty = entityType.FindProperty("CreationDate");
-            creationDateProperty.IsNullable.Should().BeFalse();
-            creationDateProperty.IsShadowProperty().Should().BeTrue();
-            creationDateProperty.ClrType.Should().Be<DateTime>();
-            creationDateProperty.ValueGenerated.Should().Be(ValueGenerated.OnAdd);
-            var lastUpdateDateProperty = entityType.FindProperty("LastUpdateDate");
-            lastUpdateDateProperty.IsNullable.Should().BeTrue();
-            lastUpdateDateProperty.IsShadowProperty().Should().BeTrue();
-            lastUpdateDateProperty.ClrType.Should().Be<DateTime?>();
-            lastUpdateDateProperty.ValueGenerated.Should().Be(ValueGenerated.OnUpdate);
-            var rowVersionProperty = entityType.FindProperty("RowVersion");
-            rowVersionProperty.IsShadowProperty().Should().BeTrue();
-            rowVersionProperty.ClrType.Should().Be<byte[]>();
-            rowVersionProperty.ValueGenerated.Should().Be(ValueGenerated.OnAddOrUpdate);
-            rowVersionProperty.IsConcurrencyToken.Should().BeTrue();
-        }
-
-        #region Nested Type: FakeEntity
-
-        [UsedImplicitly]
-        public sealed class FakeEntity : IEntity { }
-
-        #endregion
+        var creationDateProperty = entityType.FindProperty("CreationDate");
+        creationDateProperty.Should().NotBeNull();
+        creationDateProperty.IsNullable.Should().BeFalse();
+        creationDateProperty.IsShadowProperty().Should().BeTrue();
+        creationDateProperty.ClrType.Should().Be<DateTimeOffset>();
+        creationDateProperty.ValueGenerated.Should().Be(ValueGenerated.OnAdd);
+        var lastUpdateDateProperty = entityType.FindProperty("LastUpdateDate");
+        lastUpdateDateProperty.Should().NotBeNull();
+        lastUpdateDateProperty.IsNullable.Should().BeTrue();
+        lastUpdateDateProperty.IsShadowProperty().Should().BeTrue();
+        lastUpdateDateProperty.ClrType.Should().Be<DateTimeOffset?>();
+        lastUpdateDateProperty.ValueGenerated.Should().Be(ValueGenerated.OnUpdate);
+        var rowVersionProperty = entityType.FindProperty("RowVersion");
+        rowVersionProperty.Should().NotBeNull();
+        rowVersionProperty.IsShadowProperty().Should().BeTrue();
+        rowVersionProperty.ClrType.Should().Be<byte[]>();
+        rowVersionProperty.ValueGenerated.Should().Be(ValueGenerated.OnAddOrUpdate);
+        rowVersionProperty.IsConcurrencyToken.Should().BeTrue();
     }
+
+    #region Nested Type: FakeEntity
+
+    [UsedImplicitly]
+    public sealed class FakeEntity : IEntity { }
+
+    #endregion
 }

@@ -1,6 +1,6 @@
 ﻿#region Copyright & License
 
-// Copyright © 2020 - 2021 Emmanuel Benitez
+// Copyright © 2020 - 2022 Emmanuel Benitez
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,23 +21,22 @@ using BigSolution.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace BigSolution.Persistence
+namespace BigSolution.Persistence;
+
+public abstract class DerivedEntityTypeConfiguration<TEntity, TId, TBaseType> : IEntityTypeConfiguration<TEntity>
+    where TEntity : Entity<TId>, TBaseType
 {
-    public abstract class DerivedEntityTypeConfiguration<TEntity, TId, TBaseType> : IEntityTypeConfiguration<TEntity>
-        where TEntity : Entity<TId>, TBaseType
+    #region IEntityTypeConfiguration<TEntity> Members
+
+    public void Configure(EntityTypeBuilder<TEntity> builder)
     {
-        #region IEntityTypeConfiguration<TEntity> Members
+        builder.HasBaseType<TBaseType>();
 
-        public void Configure(EntityTypeBuilder<TEntity> builder)
-        {
-            builder.HasBaseType<TBaseType>();
-
-            ConfigureInternal(builder);
-        }
-
-        #endregion
-
-        [SuppressMessage("ReSharper", "UnusedParameter.Global")]
-        protected abstract void ConfigureInternal([JetBrains.Annotations.NotNull] EntityTypeBuilder<TEntity> builder);
+        ConfigureInternal(builder);
     }
+
+    #endregion
+
+    [SuppressMessage("ReSharper", "UnusedParameter.Global")]
+    protected abstract void ConfigureInternal([JetBrains.Annotations.NotNull] EntityTypeBuilder<TEntity> builder);
 }

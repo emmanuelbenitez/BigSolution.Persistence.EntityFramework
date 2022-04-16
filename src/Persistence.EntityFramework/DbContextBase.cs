@@ -1,6 +1,6 @@
 ﻿#region Copyright & License
 
-// Copyright © 2020 - 2021 Emmanuel Benitez
+// Copyright © 2020 - 2022 Emmanuel Benitez
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,26 +19,25 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 
-namespace BigSolution.Persistence
+namespace BigSolution.Persistence;
+
+public abstract class DbContextBase<TDbContext> : DbContext
+    where TDbContext : DbContextBase<TDbContext>
 {
-    public abstract class DbContextBase<TDbContext> : DbContext
-        where TDbContext : DbContextBase<TDbContext>
+    [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
+    protected DbContextBase(DbContextOptions<TDbContext> options)
+        : base(options) { }
+
+    #region Base Class Member Overrides
+
+    protected sealed override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
-        protected DbContextBase(DbContextOptions<TDbContext> options)
-            : base(options) { }
-
-        #region Base Class Member Overrides
-
-        protected sealed override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
-            if (!string.IsNullOrWhiteSpace(SchemaName)) modelBuilder.HasDefaultSchema(SchemaName);
-            base.OnModelCreating(modelBuilder);
-        }
-
-        #endregion
-
-        protected virtual string SchemaName { get; } = null;
+        modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
+        if (!string.IsNullOrWhiteSpace(SchemaName)) modelBuilder.HasDefaultSchema(SchemaName);
+        base.OnModelCreating(modelBuilder);
     }
+
+    #endregion
+
+    protected virtual string SchemaName { get; } = null;
 }

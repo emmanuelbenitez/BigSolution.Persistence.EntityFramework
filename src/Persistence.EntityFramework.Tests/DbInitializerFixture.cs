@@ -27,85 +27,84 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Moq;
 using Xunit;
 
-namespace BigSolution.Persistence
+namespace BigSolution.Persistence;
+
+public class DbInitializerFixture
 {
-    public class DbInitializerFixture
+    [Fact]
+    public void CreatedSucceeds()
     {
-        [Fact]
-        public void CreatedSucceeds()
-        {
-            var mockedMigrationAssembly = new Mock<IMigrationsAssembly>();
-            mockedMigrationAssembly.SetupGet(assembly => assembly.Migrations)
-                .Returns(new Dictionary<string, TypeInfo>());
-            var mockedMigrator = new Mock<IMigrator>();
-            var mockedServiceProvider = new Mock<IServiceProvider>();
-            mockedServiceProvider.Setup(provider => provider.GetService(typeof(IMigrationsAssembly)))
-                .Returns(() => mockedMigrationAssembly.Object);
-            mockedServiceProvider.Setup(provider => provider.GetService(typeof(IMigrator)))
-                .Returns(() => mockedMigrator.Object);
-            var mockedContext = new Mock<DbContext>();
-            var mockedDatabase = new Mock<DatabaseFacade>(mockedContext.Object);
-            mockedDatabase.As<IInfrastructure<IServiceProvider>>()
-                .SetupGet(infrastructure => infrastructure.Instance)
-                .Returns(() => mockedServiceProvider.Object);
-            mockedContext.SetupGet(context => context.Database)
-                .Returns(mockedDatabase.Object);
-            var dbInitializer = new FakeDbInitializer(mockedContext.Object);
+        var mockedMigrationAssembly = new Mock<IMigrationsAssembly>();
+        mockedMigrationAssembly.SetupGet(assembly => assembly.Migrations)
+            .Returns(new Dictionary<string, TypeInfo>());
+        var mockedMigrator = new Mock<IMigrator>();
+        var mockedServiceProvider = new Mock<IServiceProvider>();
+        mockedServiceProvider.Setup(provider => provider.GetService(typeof(IMigrationsAssembly)))
+            .Returns(() => mockedMigrationAssembly.Object);
+        mockedServiceProvider.Setup(provider => provider.GetService(typeof(IMigrator)))
+            .Returns(() => mockedMigrator.Object);
+        var mockedContext = new Mock<DbContext>();
+        var mockedDatabase = new Mock<DatabaseFacade>(mockedContext.Object);
+        mockedDatabase.As<IInfrastructure<IServiceProvider>>()
+            .SetupGet(infrastructure => infrastructure.Instance)
+            .Returns(() => mockedServiceProvider.Object);
+        mockedContext.SetupGet(context => context.Database)
+            .Returns(mockedDatabase.Object);
+        var dbInitializer = new FakeDbInitializer(mockedContext.Object);
 
-            Action act = () => dbInitializer.Seed();
-            act.Should().NotThrow();
-            mockedMigrator.Verify(migrator => migrator.Migrate(It.IsAny<string>()), Times.Never);
-            mockedDatabase.Verify(database => database.EnsureCreated(), Times.Once);
-        }
+        Action act = () => dbInitializer.Seed();
+        act.Should().NotThrow();
+        mockedMigrator.Verify(migrator => migrator.Migrate(It.IsAny<string>()), Times.Never);
+        mockedDatabase.Verify(database => database.EnsureCreated(), Times.Once);
+    }
 
-        [Fact]
-        [SuppressMessage("Performance", "CA1806:Do not ignore method results", Justification = "Testing purpose")]
-        [SuppressMessage("ReSharper", "ObjectCreationAsStatement", Justification = "Testing purpose")]
-        public void CreateFailed()
-        {
-            Action action = () => new FakeDbInitializer(null);
-            action.Should().ThrowExactly<ArgumentNullException>().Where(exception => exception.ParamName == "context");
-        }
+    [Fact]
+    [SuppressMessage("Performance", "CA1806:Do not ignore method results", Justification = "Testing purpose")]
+    [SuppressMessage("ReSharper", "ObjectCreationAsStatement", Justification = "Testing purpose")]
+    public void CreateFailed()
+    {
+        Action action = () => new FakeDbInitializer(null);
+        action.Should().ThrowExactly<ArgumentNullException>().Where(exception => exception.ParamName == "context");
+    }
 
-        [Fact]
-        [SuppressMessage("ReSharper", "ObjectCreationAsStatement", Justification = "Testing purpose")]
-        [SuppressMessage("Performance", "CA1806:Do not ignore method results", Justification = "Testing purpose")]
-        public void CreateSucceeds()
-        {
-            Action action = () => new FakeDbInitializer(new Mock<DbContext>().Object);
-            action.Should().NotThrow();
-        }
+    [Fact]
+    [SuppressMessage("ReSharper", "ObjectCreationAsStatement", Justification = "Testing purpose")]
+    [SuppressMessage("Performance", "CA1806:Do not ignore method results", Justification = "Testing purpose")]
+    public void CreateSucceeds()
+    {
+        Action action = () => new FakeDbInitializer(new Mock<DbContext>().Object);
+        action.Should().NotThrow();
+    }
 
-        [Fact]
-        public void MigrateSucceeds()
-        {
-            var mockedMigrationAssembly = new Mock<IMigrationsAssembly>();
-            mockedMigrationAssembly.SetupGet(assembly => assembly.Migrations)
-                .Returns(new Dictionary<string, TypeInfo> { { "", typeof(string).GetTypeInfo() } });
-            var mockedMigrator = new Mock<IMigrator>();
-            var mockedServiceProvider = new Mock<IServiceProvider>();
-            mockedServiceProvider.Setup(provider => provider.GetService(typeof(IMigrationsAssembly)))
-                .Returns(() => mockedMigrationAssembly.Object);
-            mockedServiceProvider.Setup(provider => provider.GetService(typeof(IMigrator)))
-                .Returns(() => mockedMigrator.Object);
-            var mockedContext = new Mock<DbContext>();
-            var mockedDatabase = new Mock<DatabaseFacade>(mockedContext.Object);
-            mockedDatabase.As<IInfrastructure<IServiceProvider>>()
-                .SetupGet(infrastructure => infrastructure.Instance)
-                .Returns(() => mockedServiceProvider.Object);
-            mockedContext.SetupGet(context => context.Database)
-                .Returns(mockedDatabase.Object);
-            var dbInitializer = new FakeDbInitializer(mockedContext.Object);
+    [Fact]
+    public void MigrateSucceeds()
+    {
+        var mockedMigrationAssembly = new Mock<IMigrationsAssembly>();
+        mockedMigrationAssembly.SetupGet(assembly => assembly.Migrations)
+            .Returns(new Dictionary<string, TypeInfo> { { "", typeof(string).GetTypeInfo() } });
+        var mockedMigrator = new Mock<IMigrator>();
+        var mockedServiceProvider = new Mock<IServiceProvider>();
+        mockedServiceProvider.Setup(provider => provider.GetService(typeof(IMigrationsAssembly)))
+            .Returns(() => mockedMigrationAssembly.Object);
+        mockedServiceProvider.Setup(provider => provider.GetService(typeof(IMigrator)))
+            .Returns(() => mockedMigrator.Object);
+        var mockedContext = new Mock<DbContext>();
+        var mockedDatabase = new Mock<DatabaseFacade>(mockedContext.Object);
+        mockedDatabase.As<IInfrastructure<IServiceProvider>>()
+            .SetupGet(infrastructure => infrastructure.Instance)
+            .Returns(() => mockedServiceProvider.Object);
+        mockedContext.SetupGet(context => context.Database)
+            .Returns(mockedDatabase.Object);
+        var dbInitializer = new FakeDbInitializer(mockedContext.Object);
 
-            Action action = () => dbInitializer.Seed();
-            action.Should().NotThrow();
-            mockedMigrator.Verify(migrator => migrator.Migrate(It.IsAny<string>()), Times.Once);
-            mockedDatabase.Verify(database => database.EnsureCreated(), Times.Never);
-        }
+        Action action = () => dbInitializer.Seed();
+        action.Should().NotThrow();
+        mockedMigrator.Verify(migrator => migrator.Migrate(It.IsAny<string>()), Times.Once);
+        mockedDatabase.Verify(database => database.EnsureCreated(), Times.Never);
+    }
 
-        private sealed class FakeDbInitializer : DbInitializer<DbContext>
-        {
-            public FakeDbInitializer(DbContext context) : base(context) { }
-        }
+    private sealed class FakeDbInitializer : DbInitializer<DbContext>
+    {
+        public FakeDbInitializer(DbContext context) : base(context) { }
     }
 }

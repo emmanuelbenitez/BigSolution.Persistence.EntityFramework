@@ -1,6 +1,6 @@
 ﻿#region Copyright & License
 
-// Copyright © 2020 - 2021 Emmanuel Benitez
+// Copyright © 2020 - 2022 Emmanuel Benitez
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,17 +16,14 @@
 
 #endregion
 
-
-
 // ReSharper disable once CheckNamespace
-namespace System.Linq.Expressions
+namespace System.Linq.Expressions;
+
+internal static class ExpressionExtensions
 {
-    internal static class ExpressionExtensions
+    public static Expression<Func<TInput, object>> ToObjectExpression<TInput, TOutput>(this Expression<Func<TInput, TOutput>> expression)
     {
-        public static Expression<Func<TInput, object>> ToObjectExpression<TInput, TOutput>(this Expression<Func<TInput, TOutput>> expression)
-        {
-            Expression converted = Expression.Convert(expression.Body, typeof(object));
-            return Expression.Lambda<Func<TInput, object>>(converted, expression.Parameters);
-        }
+        Expression converted = Expression.Convert(expression.Body, typeof(object));
+        return Expression.Lambda<Func<TInput, object>>(converted, expression.Parameters);
     }
 }

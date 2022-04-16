@@ -1,6 +1,6 @@
 ﻿#region Copyright & License
 
-// Copyright © 2020 - 2021 Emmanuel Benitez
+// Copyright © 2020 - 2022 Emmanuel Benitez
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,44 +16,41 @@
 
 #endregion
 
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using BigSolution.Domain;
 using BigSolution.Persistence.Conventions;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace BigSolution.Persistence
+namespace BigSolution.Persistence;
+
+[UsedImplicitly]
+public abstract class EntityTypeConfiguration<TEntity, TId> : IEntityTypeConfiguration<TEntity>
+    where TEntity : Entity<TId>
 {
-    [UsedImplicitly]
-    public abstract class EntityTypeConfiguration<TEntity, TId> : IEntityTypeConfiguration<TEntity>
-        where TEntity : Entity<TId>
+    #region IEntityTypeConfiguration<TEntity> Members
+
+    public void Configure([JetBrains.Annotations.NotNull] EntityTypeBuilder<TEntity> builder)
     {
-        #region IEntityTypeConfiguration<TEntity> Members
-
-        public void Configure([JetBrains.Annotations.NotNull] EntityTypeBuilder<TEntity> builder)
+        foreach (var convention in Conventions ?? Enumerable.Empty<IEntityTypeBuilderConvention<TEntity>>())
         {
-            foreach (var convention in Conventions ?? Enumerable.Empty<IEntityTypeBuilderConvention<TEntity>>())
-            {
-                convention.Apply(builder);
-            }
-
-            ConfigureInternal(builder);
+            convention.Apply(builder);
         }
 
-        #endregion
-
-        [SuppressMessage("ReSharper", "VirtualMemberNeverOverridden.Global", Justification = "Public API")]
-
-        protected virtual IEnumerable<IEntityTypeBuilderConvention<TEntity>> Conventions => _defaultConventions;
-
-        protected abstract void ConfigureInternal([JetBrains.Annotations.NotNull] EntityTypeBuilder<TEntity> builder);
-
-        private static readonly IEntityTypeBuilderConvention<TEntity>[] _defaultConventions = {
-            new IdEntityTypeConvention<TEntity, TId>(true),
-            new AuditShadowPropertiesConvention<TEntity>()
-        };
+        ConfigureInternal(builder);
     }
+
+    #endregion
+
+    [SuppressMessage("ReSharper", "VirtualMemberNeverOverridden.Global", Justification = "Public API")]
+
+    protected virtual IEnumerable<IEntityTypeBuilderConvention<TEntity>> Conventions => _defaultConventions;
+
+    protected abstract void ConfigureInternal([JetBrains.Annotations.NotNull] EntityTypeBuilder<TEntity> builder);
+
+    private static readonly IEntityTypeBuilderConvention<TEntity>[] _defaultConventions = {
+        new IdEntityTypeConvention<TEntity, TId>(true),
+        new AuditShadowPropertiesConvention<TEntity>()
+    };
 }

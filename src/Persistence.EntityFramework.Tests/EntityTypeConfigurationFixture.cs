@@ -25,47 +25,46 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Xunit;
 
-namespace BigSolution.Persistence
+namespace BigSolution.Persistence;
+
+public class EntityTypeConfigurationFixture : DbContextFixture
 {
-    public class EntityTypeConfigurationFixture : DbContextFixture
+    [Fact]
+    public void ConfigurationSucceeds()
     {
-        [Fact]
-        public void ConfigurationSucceeds()
-        {
-            _context.ModelCreator = builder => builder.ApplyConfiguration(new FakeEntityConfiguration());
-            var entityType = _context.Model.FindEntityType(typeof(FakeEntity));
-            entityType.GetSchema().Should().BeNullOrEmpty();
+        _context.ModelCreator = builder => builder.ApplyConfiguration(new FakeEntityConfiguration());
+        var entityType = _context.Model.FindEntityType(typeof(FakeEntity));
+        entityType.GetSchema().Should().BeNullOrEmpty();
 
-            var idProperty = entityType.FindProperty("Id");
-            idProperty.IsNullable.Should().BeFalse();
-            idProperty.IsPrimaryKey().Should().BeTrue();
-            idProperty.ValueGenerated.Should().Be(ValueGenerated.OnAdd);
-            var creationDateProperty = entityType.FindProperty("CreationDate");
-            creationDateProperty.IsNullable.Should().BeFalse();
-            creationDateProperty.IsShadowProperty().Should().BeTrue();
-            creationDateProperty.ClrType.Should().Be<DateTime>();
-            creationDateProperty.ValueGenerated.Should().Be(ValueGenerated.OnAdd);
-            var lastUpdateDateProperty = entityType.FindProperty("LastUpdateDate");
-            lastUpdateDateProperty.IsNullable.Should().BeTrue();
-            lastUpdateDateProperty.IsShadowProperty().Should().BeTrue();
-            lastUpdateDateProperty.ClrType.Should().Be<DateTime?>();
-            lastUpdateDateProperty.ValueGenerated.Should().Be(ValueGenerated.OnUpdate);
-            var rowVersionProperty = entityType.FindProperty("RowVersion");
-            rowVersionProperty.IsShadowProperty().Should().BeTrue();
-            rowVersionProperty.ClrType.Should().Be<byte[]>();
-            rowVersionProperty.ValueGenerated.Should().Be(ValueGenerated.OnAddOrUpdate);
-            rowVersionProperty.IsConcurrencyToken.Should().BeTrue();
-        }
+        var idProperty = entityType.FindProperty("Id");
+        idProperty.IsNullable.Should().BeFalse();
+        idProperty.IsPrimaryKey().Should().BeTrue();
+        idProperty.ValueGenerated.Should().Be(ValueGenerated.OnAdd);
+        var creationDateProperty = entityType.FindProperty("CreationDate");
+        creationDateProperty.IsNullable.Should().BeFalse();
+        creationDateProperty.IsShadowProperty().Should().BeTrue();
+        creationDateProperty.ClrType.Should().Be<DateTimeOffset>();
+        creationDateProperty.ValueGenerated.Should().Be(ValueGenerated.OnAdd);
+        var lastUpdateDateProperty = entityType.FindProperty("LastUpdateDate");
+        lastUpdateDateProperty.IsNullable.Should().BeTrue();
+        lastUpdateDateProperty.IsShadowProperty().Should().BeTrue();
+        lastUpdateDateProperty.ClrType.Should().Be<DateTimeOffset?>();
+        lastUpdateDateProperty.ValueGenerated.Should().Be(ValueGenerated.OnUpdate);
+        var rowVersionProperty = entityType.FindProperty("RowVersion");
+        rowVersionProperty.IsShadowProperty().Should().BeTrue();
+        rowVersionProperty.ClrType.Should().Be<byte[]>();
+        rowVersionProperty.ValueGenerated.Should().Be(ValueGenerated.OnAddOrUpdate);
+        rowVersionProperty.IsConcurrencyToken.Should().BeTrue();
+    }
 
-        private sealed class FakeEntity : Entity<int> { }
+    private sealed class FakeEntity : Entity<int> { }
 
-        private sealed class FakeEntityConfiguration : EntityTypeConfiguration<FakeEntity, int>
-        {
-            #region Base Class Member Overrides
+    private sealed class FakeEntityConfiguration : EntityTypeConfiguration<FakeEntity, int>
+    {
+        #region Base Class Member Overrides
 
-            protected override void ConfigureInternal(EntityTypeBuilder<FakeEntity> builder) { }
+        protected override void ConfigureInternal(EntityTypeBuilder<FakeEntity> builder) { }
 
-            #endregion
-        }
+        #endregion
     }
 }

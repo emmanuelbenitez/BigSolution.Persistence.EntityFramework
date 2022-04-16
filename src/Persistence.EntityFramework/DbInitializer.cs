@@ -1,6 +1,6 @@
 ﻿#region Copyright & License
 
-// Copyright © 2020 - 2021 Emmanuel Benitez
+// Copyright © 2020 - 2022 Emmanuel Benitez
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,39 +17,37 @@
 #endregion
 
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
 
-namespace BigSolution.Persistence
+namespace BigSolution.Persistence;
+
+public abstract class DbInitializer<TContext> : IDbInitializer
+    where TContext : DbContext
 {
-    public abstract class DbInitializer<TContext> : IDbInitializer
-        where TContext : DbContext
+    protected DbInitializer([NotNull] TContext context)
     {
-        protected DbInitializer([NotNull] TContext context)
-        {
-            Requires.Argument(context, nameof(context))
-                .IsNotNull()
-                .Check();
+        Requires.Argument(context, nameof(context))
+            .IsNotNull()
+            .Check();
 
-            _context = context;
-        }
-
-        #region IDbInitializer Members
-
-        public void Seed()
-        {
-            if (_context.Database.GetMigrations().Any()) _context.Database.Migrate();
-            else _context.Database.EnsureCreated();
-
-            SeedData(_context);
-        }
-
-        #endregion
-
-        [SuppressMessage("ReSharper", "VirtualMemberNeverOverridden.Global")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Global")]
-        protected virtual void SeedData([JetBrains.Annotations.NotNull] TContext context) { }
-
-        private readonly TContext _context;
+        _context = context;
     }
+
+    #region IDbInitializer Members
+
+    public void Seed()
+    {
+        if (_context.Database.GetMigrations().Any()) _context.Database.Migrate();
+        else _context.Database.EnsureCreated();
+
+        SeedData(_context);
+    }
+
+    #endregion
+
+    [SuppressMessage("ReSharper", "VirtualMemberNeverOverridden.Global")]
+    [SuppressMessage("ReSharper", "UnusedParameter.Global")]
+    protected virtual void SeedData([JetBrains.Annotations.NotNull] TContext context) { }
+
+    private readonly TContext _context;
 }

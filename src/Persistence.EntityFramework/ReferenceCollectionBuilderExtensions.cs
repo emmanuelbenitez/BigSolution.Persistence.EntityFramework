@@ -1,6 +1,6 @@
 ﻿#region Copyright & License
 
-// Copyright © 2020 - 2021 Emmanuel Benitez
+// Copyright © 2020 - 2022 Emmanuel Benitez
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 #endregion
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using JetBrains.Annotations;
@@ -24,27 +23,26 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace BigSolution.Persistence
-{
-    [UsedImplicitly]
-    public static class ReferenceCollectionBuilderExtensions
-    {
-        [SuppressMessage("ReSharper", "UnusedMember.Global")]
-        public static void SetNavigationPropertyAccessMode<TEntity, TProperty>(
-            [JetBrains.Annotations.NotNull] this EntityTypeBuilder<TEntity> builder,
-            [JetBrains.Annotations.NotNull] Expression<Func<TEntity, TProperty>> propertyExpression,
-            PropertyAccessMode? propertyAccessMode)
-            where TEntity : class
-        {
-            Requires.Argument(builder, nameof(builder))
-                .IsNotNull()
-                .Check();
-            Requires.Argument(propertyExpression, nameof(propertyExpression))
-                .IsNotNull()
-                .Check();
+namespace BigSolution.Persistence;
 
-            builder.Metadata.FindNavigation(propertyExpression.GetPropertyAccess())
-                .SetPropertyAccessMode(propertyAccessMode);
-        }
+[UsedImplicitly]
+public static class ReferenceCollectionBuilderExtensions
+{
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public static void SetNavigationPropertyAccessMode<TEntity, TProperty>(
+        [JetBrains.Annotations.NotNull] this EntityTypeBuilder<TEntity> builder,
+        [JetBrains.Annotations.NotNull] Expression<Func<TEntity, TProperty>> propertyExpression,
+        PropertyAccessMode? propertyAccessMode)
+        where TEntity : class
+    {
+        Requires.Argument(builder, nameof(builder))
+            .IsNotNull()
+            .Check();
+        Requires.Argument(propertyExpression, nameof(propertyExpression))
+            .IsNotNull()
+            .Check();
+
+        builder.Metadata.FindNavigation(propertyExpression.GetPropertyAccess())
+            .SetPropertyAccessMode(propertyAccessMode);
     }
 }

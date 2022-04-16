@@ -1,6 +1,6 @@
 ﻿#region Copyright & License
 
-// Copyright © 2020 - 2021 Emmanuel Benitez
+// Copyright © 2020 - 2022 Emmanuel Benitez
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,59 +16,57 @@
 
 #endregion
 
-using System.Linq;
 using BigSolution.Domain;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 
-namespace BigSolution.Persistence
+namespace BigSolution.Persistence;
+
+public abstract class EntityFrameworkRepository<TDbContext, TAggregate> : IRepository<TAggregate>
+    where TAggregate : class, IAggregateRoot
+    where TDbContext : DbContext
 {
-    public abstract class EntityFrameworkRepository<TDbContext, TAggregate> : IRepository<TAggregate>
-        where TAggregate : class, IAggregateRoot
-        where TDbContext : DbContext
+    protected EntityFrameworkRepository([NotNull] TDbContext dbContext)
     {
-        protected EntityFrameworkRepository([NotNull] TDbContext dbContext)
-        {
-            Requires.Argument(dbContext, nameof(dbContext))
-                .IsNotNull()
-                .Check();
+        Requires.Argument(dbContext, nameof(dbContext))
+            .IsNotNull()
+            .Check();
 
-            _dbContext = dbContext;
-        }
-
-        #region IRepository<TAggregate> Members
-
-        public void Add(TAggregate entity)
-        {
-            Requires.Argument(entity, nameof(entity))
-                .IsNotNull()
-                .Check();
-
-            _dbContext.Add(entity);
-        }
-
-        public void Delete(TAggregate entity)
-        {
-            Requires.Argument(entity, nameof(entity))
-                .IsNotNull()
-                .Check();
-
-            _dbContext.Remove(entity);
-        }
-
-        public IQueryable<TAggregate> Entities => _dbContext.Set<TAggregate>();
-
-        public void Update(TAggregate entity)
-        {
-            Requires.Argument(entity, nameof(entity))
-                .IsNotNull()
-                .Check();
-
-            _dbContext.Update(entity);
-        }
-
-        #endregion
-
-        private readonly TDbContext _dbContext;
+        _dbContext = dbContext;
     }
+
+    #region IRepository<TAggregate> Members
+
+    public void Add(TAggregate entity)
+    {
+        Requires.Argument(entity, nameof(entity))
+            .IsNotNull()
+            .Check();
+
+        _dbContext.Add(entity);
+    }
+
+    public void Delete(TAggregate entity)
+    {
+        Requires.Argument(entity, nameof(entity))
+            .IsNotNull()
+            .Check();
+
+        _dbContext.Remove(entity);
+    }
+
+    public IQueryable<TAggregate> Entities => _dbContext.Set<TAggregate>();
+
+    public void Update(TAggregate entity)
+    {
+        Requires.Argument(entity, nameof(entity))
+            .IsNotNull()
+            .Check();
+
+        _dbContext.Update(entity);
+    }
+
+    #endregion
+
+    private readonly TDbContext _dbContext;
 }

@@ -1,6 +1,6 @@
 ﻿#region Copyright & License
 
-// Copyright © 2020 - 2021 Emmanuel Benitez
+// Copyright © 2020 - 2022 Emmanuel Benitez
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,11 +18,10 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace BigSolution.Persistence
+namespace BigSolution.Persistence;
+
+public interface IDbInitializer
 {
-    public interface IDbInitializer
-    {
-        [SuppressMessage("ReSharper", "UnusedMemberInSuper.Global")]
-        void Seed();
-    }
+    [SuppressMessage("ReSharper", "UnusedMemberInSuper.Global")]
+    void Seed();
 }

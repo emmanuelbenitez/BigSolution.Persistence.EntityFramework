@@ -1,10 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
     <AssemblyTitle>BigSolution.Infra.Persistence.EntityFramework.Unit</AssemblyTitle>
     <RootNamespace>BigSolution.Persistence.Unit</RootNamespace>
     <Description>Provide fixture for testing Persistence.EntityFramework assembly</Description>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -32,7 +34,7 @@
 
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="5.0.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.4" />
   </ItemGroup>
 
   <ItemGroup>
