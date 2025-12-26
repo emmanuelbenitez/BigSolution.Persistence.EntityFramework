@@ -19,7 +19,7 @@
 
 	<PropertyGroup>
 		<GeneratePackageOnBuild Condition=" '$(GeneratePackageOnBuild)' == '' ">false</GeneratePackageOnBuild>
-		<PackageId>$(AssemblyTitle)</PackageId>
+		<PackageId>BigSolution.Infra.$(MSBuildProjectName)</PackageId>
 		<PackageDescription>$(Description)</PackageDescription>
 		<!--<PackageIconUrl>icon url prop</PackageIconUrl>-->
 		<PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
@@ -27,7 +27,7 @@
 		<PackageTags>ef repository</PackageTags>
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
-		<AssemblyName>BigSolution.Infra.Persistence</AssemblyName>
+		<AssemblyName>BigSolution.Infra.$(MSBuildProjectName)</AssemblyName>
 	</PropertyGroup>
 
 	<ItemGroup>
