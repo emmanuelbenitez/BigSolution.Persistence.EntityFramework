@@ -32,7 +32,8 @@ public class OwnedNavigationBuilderExtensionsFixture : DbContextFixture
     [Fact]
     public void ConfigureFailed()
     {
-        Action action = () => ((OwnedNavigationBuilder<FakeEntity, OwnedProperty>?)null).Configure(null);
+        var mockedAction = new Mock<Action<OwnedNavigationBuilder<FakeEntity, OwnedProperty>>>();
+        Action action = () => ((OwnedNavigationBuilder<FakeEntity, OwnedProperty>?)null).Configure(mockedAction.Object);
         action.Should().ThrowExactly<ArgumentNullException>().Where(exception => exception.ParamName == "builder");
     }
 

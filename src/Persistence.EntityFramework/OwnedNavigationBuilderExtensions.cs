@@ -50,6 +50,6 @@ public static class OwnedNavigationBuilderExtensions
     {
         configureAction?.Invoke(builder ?? throw new ArgumentNullException(nameof(builder)));
 
-        return builder;
+        return builder!;
     }
 }

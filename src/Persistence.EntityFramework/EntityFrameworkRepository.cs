@@ -67,7 +67,7 @@ public abstract class EntityFrameworkRepository<TDbContext, TAggregate>(TDbConte
     /// </remarks>
     public void Delete(TAggregate entity)
     {
-        _dbContext.Remove(entity);
+        _dbContext.Remove(entity ?? throw new ArgumentNullException(nameof(entity)));
     }
 
     /// <summary>
