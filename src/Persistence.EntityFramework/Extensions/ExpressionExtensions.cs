@@ -19,8 +19,31 @@
 // ReSharper disable once CheckNamespace
 namespace System.Linq.Expressions;
 
+/// <summary>
+/// Provides extension methods for working with <see cref="Expression"/> objects in the <see cref="System.Linq.Expressions"/> namespace.
+/// </summary>
+/// <remarks>
+/// This static class includes utility methods that simplify or enhance the manipulation of expression trees,
+/// such as converting expressions to a generalized return type or other common expression-related tasks.
+/// </remarks>
 internal static class ExpressionExtensions
 {
+    /// <summary>
+    /// Converts an expression with a specific return type to an expression with a return type of <see cref="object"/>.
+    /// </summary>
+    /// <typeparam name="TInput">The type of the input parameter of the expression.</typeparam>
+    /// <typeparam name="TOutput">The original return type of the expression.</typeparam>
+    /// <param name="expression">The expression to convert.</param>
+    /// <returns>
+    /// A new expression that has the same input parameter as the original expression but returns a value of type <see cref="object"/>.
+    /// </returns>
+    /// <remarks>
+    /// This method is useful when working with expressions that need to be generalized to return an <see cref="object"/> type,
+    /// such as when configuring entity keys or other scenarios requiring type conversion.
+    /// </remarks>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown if the <paramref name="expression"/> is <c>null</c>.
+    /// </exception>
     public static Expression<Func<TInput, object>> ToObjectExpression<TInput, TOutput>(this Expression<Func<TInput, TOutput>> expression)
     {
         Expression converted = Expression.Convert(expression.Body, typeof(object));

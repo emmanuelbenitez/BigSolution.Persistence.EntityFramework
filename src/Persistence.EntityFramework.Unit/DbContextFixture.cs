@@ -16,18 +16,13 @@
 
 #endregion
 
-using System;
 using System.Diagnostics.CodeAnalysis;
+using BigSolution.Persistence.Unit;
 
-namespace BigSolution.Persistence.Unit;
+namespace BigSolution.Persistence;
 
 public abstract class DbContextFixture : IDisposable
 {
-    protected DbContextFixture()
-    {
-        _context = new FakeDbContext();
-    }
-
     #region IDisposable Members
 
     public void Dispose()
@@ -47,5 +42,5 @@ public abstract class DbContextFixture : IDisposable
         }
     }
 
-    protected readonly FakeDbContext _context;
+    protected readonly FakeDbContext _context = new();
 }

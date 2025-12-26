@@ -1,6 +1,6 @@
 ﻿#region Copyright & License
 
-// Copyright © 2020 - 2022 Emmanuel Benitez
+// Copyright © 2020 - 2025 Emmanuel Benitez
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,24 +25,46 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace BigSolution.Persistence;
 
+/// <summary>
+/// Provides extension methods for configuring reference collection properties in Entity Framework Core.
+/// </summary>
+/// <remarks>
+/// This static class contains helper methods to simplify and enhance the configuration of navigation properties
+/// and their access modes in the Entity Framework Core model.
+/// </remarks>
 [UsedImplicitly]
 public static class ReferenceCollectionBuilderExtensions
 {
+    /// <summary>
+    /// Configures the access mode for a navigation property in the Entity Framework Core model.
+    /// </summary>
+    /// <typeparam name="TEntity">The type of the entity containing the navigation property.</typeparam>
+    /// <typeparam name="TProperty">The type of the navigation property.</typeparam>
+    /// <param name="builder">
+    /// The <see cref="EntityTypeBuilder{TEntity}"/> used to configure the entity type.
+    /// </param>
+    /// <param name="propertyExpression">
+    /// An expression that identifies the navigation property to configure.
+    /// </param>
+    /// <param name="propertyAccessMode">
+    /// The <see cref="PropertyAccessMode"/> to set for the navigation property. Pass <c>null</c> to use the default access mode.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown if <paramref name="builder"/> or <paramref name="propertyExpression"/> is <c>null</c>.
+    /// </exception>
+    /// <remarks>
+    /// This method simplifies the configuration of navigation property access modes, allowing developers to specify
+    /// whether properties should be accessed via their field, property, or a combination of both.
+    /// </remarks>
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public static void SetNavigationPropertyAccessMode<TEntity, TProperty>(
-        [JetBrains.Annotations.NotNull] this EntityTypeBuilder<TEntity> builder,
-        [JetBrains.Annotations.NotNull] Expression<Func<TEntity, TProperty>> propertyExpression,
+        this EntityTypeBuilder<TEntity> builder,
+        Expression<Func<TEntity, TProperty>> propertyExpression,
         PropertyAccessMode? propertyAccessMode)
         where TEntity : class
     {
-        Requires.Argument(builder, nameof(builder))
-            .IsNotNull()
-            .Check();
-        Requires.Argument(propertyExpression, nameof(propertyExpression))
-            .IsNotNull()
-            .Check();
-
-        builder.Metadata.FindNavigation(propertyExpression.GetPropertyAccess())
-            .SetPropertyAccessMode(propertyAccessMode);
+        (builder ?? throw new ArgumentNullException(nameof(builder))).Metadata
+            .FindNavigation((propertyExpression ?? throw new ArgumentNullException(nameof(propertyExpression))).GetPropertyAccess())
+            ?.SetPropertyAccessMode(propertyAccessMode);
     }
 }

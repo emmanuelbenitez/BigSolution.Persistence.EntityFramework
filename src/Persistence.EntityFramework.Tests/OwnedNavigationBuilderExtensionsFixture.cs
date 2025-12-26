@@ -1,6 +1,6 @@
 ﻿#region Copyright & License
 
-// Copyright © 2020 - 2021 Emmanuel Benitez
+// Copyright © 2020 - 2025 Emmanuel Benitez
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,13 +16,10 @@
 
 #endregion
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using BigSolution.Domain;
-using BigSolution.Persistence.Unit;
 using FluentAssertions;
 using JetBrains.Annotations;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Moq;
 using Xunit;
@@ -35,7 +32,7 @@ public class OwnedNavigationBuilderExtensionsFixture : DbContextFixture
     [Fact]
     public void ConfigureFailed()
     {
-        Action action = () => ((OwnedNavigationBuilder<FakeEntity, OwnedProperty>) null).Configure(null);
+        Action action = () => ((OwnedNavigationBuilder<FakeEntity, OwnedProperty>?)null).Configure(null);
         action.Should().ThrowExactly<ArgumentNullException>().Where(exception => exception.ParamName == "builder");
     }
 
@@ -55,24 +52,17 @@ public class OwnedNavigationBuilderExtensionsFixture : DbContextFixture
         _context.Model.FindEntityType(typeof(FakeEntity));
     }
 
-    private class FakeEntityConfiguration : EntityTypeConfiguration<FakeEntity, int>
+    private class FakeEntityConfiguration(Action<OwnedNavigationBuilder<FakeEntity, OwnedProperty>>? configureAction) : EntityTypeConfiguration<FakeEntity, int>
     {
-        public FakeEntityConfiguration(Action<OwnedNavigationBuilder<FakeEntity, OwnedProperty>> configureAction)
-        {
-            _configureAction = configureAction;
-        }
-
         #region Base Class Member Overrides
 
         protected override void ConfigureInternal(EntityTypeBuilder<FakeEntity> builder)
         {
             builder.OwnsOne(fakeEntity => fakeEntity.OwnedProperty)
-                .Configure(_configureAction);
+                .Configure(configureAction);
         }
 
         #endregion
-
-        private readonly Action<OwnedNavigationBuilder<FakeEntity, OwnedProperty>> _configureAction;
     }
 
     public sealed class FakeEntity : Entity<int>

@@ -20,6 +20,13 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace BigSolution.Persistence;
 
+/// <summary>
+/// Defines the contract for initializing a database.
+/// </summary>
+/// <remarks>
+/// Implementations of this interface are responsible for ensuring that the database is properly initialized,
+/// which may include creating the database schema, applying migrations, and seeding initial data.
+/// </remarks>
 public interface IDbInitializer
 {
     [SuppressMessage("ReSharper", "UnusedMemberInSuper.Global")]

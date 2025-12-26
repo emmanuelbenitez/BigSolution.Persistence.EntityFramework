@@ -20,9 +20,18 @@ using BigSolution.Domain;
 
 namespace BigSolution.Persistence.Conventions;
 
-public class IdEntityTypeConvention<TEntity, TId> : KeyEntityTypeConvention<TEntity, TId>
-    where TEntity : Entity<TId>
-{
-    public IdEntityTypeConvention(bool isAutomaticallyGenerated)
-        : base(entity => entity.Id, isAutomaticallyGenerated) { }
-}
+/// <summary>
+/// Represents a convention that configures the primary key for an entity type based on its <c>Id</c> property.
+/// </summary>
+/// <typeparam name="TEntity">
+/// The type of the entity for which the convention is applied. Must inherit from <see cref="Entity{TId}"/>.
+/// </typeparam>
+/// <typeparam name="TId">
+/// The type of the identifier for the entity.
+/// </typeparam>
+/// <remarks>
+/// This convention ensures that the <c>Id</c> property is configured as the primary key and applies additional
+/// configurations based on whether the identifier is automatically generated.
+/// </remarks>
+public class IdEntityTypeConvention<TEntity, TId>(bool isAutomaticallyGenerated) : KeyEntityTypeConvention<TEntity, TId>(entity => entity.Id, isAutomaticallyGenerated)
+    where TEntity : Entity<TId>;

@@ -21,20 +21,47 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BigSolution.Persistence;
 
+/// <summary>
+/// Provides a base implementation for initializing a database context of type <typeparamref name="TContext"/>.
+/// </summary>
+/// <typeparam name="TContext">
+/// The type of the database context, which must derive from <see cref="Microsoft.EntityFrameworkCore.DbContext"/>.
+/// </typeparam>
+/// <remarks>
+/// This class ensures that the database is either created or migrated to the latest version before seeding data.
+/// Derived classes can override the <see cref="SeedData"/> method to provide custom data seeding logic.
+/// </remarks>
 public abstract class DbInitializer<TContext> : IDbInitializer
     where TContext : DbContext
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DbInitializer{TContext}"/> class.
+    /// </summary>
+    /// <param name="context">
+    /// The database context of type <typeparamref name="TContext"/> to be initialized. 
+    /// This parameter must not be <c>null</c>.
+    /// </param>
+    /// <exception cref="System.ArgumentNullException">
+    /// Thrown when the <paramref name="context"/> is <c>null</c>.
+    /// </exception>
     protected DbInitializer([NotNull] TContext context)
     {
-        Requires.Argument(context, nameof(context))
-            .IsNotNull()
-            .Check();
-
-        _context = context;
+        _context = context ?? throw new ArgumentNullException(nameof(context));
     }
 
     #region IDbInitializer Members
 
+    /// <summary>
+    /// Ensures that the database associated with the context is properly initialized.
+    /// </summary>
+    /// <remarks>
+    /// If the database supports migrations, it applies any pending migrations to bring the database
+    /// to the latest version. Otherwise, it ensures that the database is created if it does not already exist.
+    /// Afterward, it invokes the <see cref="SeedData"/> method to populate the database with initial data.
+    /// </remarks>
+    /// <exception cref="System.InvalidOperationException">
+    /// Thrown if the database context is not properly configured or if an error occurs during initialization.
+    /// </exception>
     public void Seed()
     {
         if (_context.Database.GetMigrations().Any()) _context.Database.Migrate();
@@ -45,9 +72,20 @@ public abstract class DbInitializer<TContext> : IDbInitializer
 
     #endregion
 
+    /// <summary>
+    /// Seeds the database with initial data for the specified context.
+    /// </summary>
+    /// <param name="context">
+    /// The database context of type <typeparamref name="TContext"/> to seed data into. 
+    /// This parameter must not be <see langword="null"/>.
+    /// </param>
+    /// <remarks>
+    /// Derived classes can override this method to implement custom data seeding logic.
+    /// This method is invoked after ensuring that the database is created or migrated to the latest version.
+    /// </remarks>
     [SuppressMessage("ReSharper", "VirtualMemberNeverOverridden.Global")]
     [SuppressMessage("ReSharper", "UnusedParameter.Global")]
-    protected virtual void SeedData([JetBrains.Annotations.NotNull] TContext context) { }
+    protected virtual void SeedData(TContext context) { }
 
     private readonly TContext _context;
 }

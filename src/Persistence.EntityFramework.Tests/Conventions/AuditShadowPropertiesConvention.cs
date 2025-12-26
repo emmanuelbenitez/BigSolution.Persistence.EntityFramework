@@ -18,7 +18,6 @@
 
 using System;
 using BigSolution.Domain;
-using BigSolution.Persistence.Unit.Conventions;
 using FluentAssertions;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;

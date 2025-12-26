@@ -16,14 +16,12 @@
 
 #endregion
 
-using System;
 using BigSolution.Domain;
-using BigSolution.Persistence.Conventions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace BigSolution.Persistence.Unit.Conventions;
+namespace BigSolution.Persistence.Conventions;
 
 public abstract class EntityTypeBuilderConventionFixture<TConvention, TEntity> : DbContextFixture
     where TConvention : class, IEntityTypeBuilderConvention<TEntity>

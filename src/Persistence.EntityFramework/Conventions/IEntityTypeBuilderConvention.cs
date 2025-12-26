@@ -21,8 +21,20 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace BigSolution.Persistence.Conventions;
 
+/// <summary>
+/// Defines a convention that can be applied to an <see cref="Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder{TEntity}"/>.
+/// </summary>
+/// <typeparam name="TEntity">
+/// The type of the entity to which the convention applies. This type must implement <see cref="BigSolution.Domain.IEntity"/>.
+/// </typeparam>
 public interface IEntityTypeBuilderConvention<TEntity>
     where TEntity : class, IEntity
 {
+    /// <summary>
+    /// Applies the convention to the specified <see cref="Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder{TEntity}"/>.
+    /// </summary>
+    /// <param name="builder">
+    /// The <see cref="Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder{TEntity}"/> to which the convention is applied.
+    /// </param>
     void Apply(EntityTypeBuilder<TEntity> builder);
 }

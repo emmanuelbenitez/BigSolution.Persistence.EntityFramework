@@ -18,9 +18,13 @@
 -->
 <Project>
   <PropertyGroup>
-    <Major Condition=" '$(Major)' == '' ">1</Major>
-    <Minor Condition=" '$(Minor)' == '' ">1</Minor>
-    <Patch Condition=" '$(Patch)' == '' ">1</Patch>
+	  <Major Condition=" '$(Major)' == '' ">1</Major>
+	  <Minor Condition=" '$(Minor)' == '' ">2</Minor>
+	  <Patch Condition=" '$(Patch)' == '' ">0</Patch>
+
+	  <AssemblyName>BigSolution.$(MSBuildProjectName)</AssemblyName>
+	  <RootNamespace>BigSolution.Persistence</RootNamespace>
+	  <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <Import Project="$(MSBuildThisFileDirectory)../.resources/Directory.Build.props" />

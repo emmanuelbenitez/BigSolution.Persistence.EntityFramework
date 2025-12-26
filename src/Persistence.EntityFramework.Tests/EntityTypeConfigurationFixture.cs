@@ -16,9 +16,7 @@
 
 #endregion
 
-using System;
 using BigSolution.Domain;
-using BigSolution.Persistence.Unit;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -34,24 +32,24 @@ public class EntityTypeConfigurationFixture : DbContextFixture
     {
         _context.ModelCreator = builder => builder.ApplyConfiguration(new FakeEntityConfiguration());
         var entityType = _context.Model.FindEntityType(typeof(FakeEntity));
-        entityType.GetSchema().Should().BeNullOrEmpty();
+        entityType!.GetSchema().Should().BeNullOrEmpty();
 
         var idProperty = entityType.FindProperty("Id");
-        idProperty.IsNullable.Should().BeFalse();
+        idProperty!.IsNullable.Should().BeFalse();
         idProperty.IsPrimaryKey().Should().BeTrue();
         idProperty.ValueGenerated.Should().Be(ValueGenerated.OnAdd);
         var creationDateProperty = entityType.FindProperty("CreationDate");
-        creationDateProperty.IsNullable.Should().BeFalse();
+        creationDateProperty!.IsNullable.Should().BeFalse();
         creationDateProperty.IsShadowProperty().Should().BeTrue();
         creationDateProperty.ClrType.Should().Be<DateTimeOffset>();
         creationDateProperty.ValueGenerated.Should().Be(ValueGenerated.OnAdd);
         var lastUpdateDateProperty = entityType.FindProperty("LastUpdateDate");
-        lastUpdateDateProperty.IsNullable.Should().BeTrue();
+        lastUpdateDateProperty!.IsNullable.Should().BeTrue();
         lastUpdateDateProperty.IsShadowProperty().Should().BeTrue();
         lastUpdateDateProperty.ClrType.Should().Be<DateTimeOffset?>();
         lastUpdateDateProperty.ValueGenerated.Should().Be(ValueGenerated.OnUpdate);
         var rowVersionProperty = entityType.FindProperty("RowVersion");
-        rowVersionProperty.IsShadowProperty().Should().BeTrue();
+        rowVersionProperty!.IsShadowProperty().Should().BeTrue();
         rowVersionProperty.ClrType.Should().Be<byte[]>();
         rowVersionProperty.ValueGenerated.Should().Be(ValueGenerated.OnAddOrUpdate);
         rowVersionProperty.IsConcurrencyToken.Should().BeTrue();

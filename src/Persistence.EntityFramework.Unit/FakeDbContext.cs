@@ -16,10 +16,9 @@
 
 #endregion
 
-using System;
 using Microsoft.EntityFrameworkCore;
 
-namespace BigSolution.Persistence.Unit;
+namespace BigSolution.Persistence;
 
 public class FakeDbContext : DbContext
 {
